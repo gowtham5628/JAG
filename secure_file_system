@@ -1,0 +1,184 @@
+# JAG
+Secured folder system
+
+import os
+import hashlib
+
+# --- Function to hash passwords ---
+def hash_password(password):
+    return hashlib.sha256(password.encode()).hexdigest()
+
+
+# --- Create a new secure file ---
+def create_new_file():
+    filename = input("Enter file name: ").strip()
+    hidden_folder = "." + filename
+    password_file = filename + "_password.txt"
+    question_file = filename + "_questions.txt"
+
+    if os.path.exists(password_file):
+        print("A file with this name already exists.")
+        return
+
+    # ASK PASSWORD + CONFIRM PASSWORD
+    while True:
+        pwd = input("Set a password: ")
+        confirm = input("Confirm password: ")
+
+        if pwd != confirm:
+            print("Passwords do not match! Try again.\n")
+        else:
+            break
+
+    # SECURITY QUESTIONS
+    print("\nSet two security questions for backup access:")
+    q1_ans = input("Your favourite color: ").strip().lower()
+    q2_ans = input("Your best friend's name: ").strip().lower()
+
+    # SAVE PASSWORD
+    with open(password_file, "w") as f:
+        f.write(hash_password(pwd))
+
+    # SAVE SECURITY QS
+    with open(question_file, "w") as f:
+        f.write(q1_ans + "\n")
+        f.write(q2_ans)
+
+    if not os.path.exists(hidden_folder):
+        os.mkdir(hidden_folder)
+
+    print("Secure file created and locked.")
+
+
+# --- Unlock an existing secure file ---
+def unlock_file():
+    filename = input("Enter file name: ").strip()
+    password_file = filename + "_password.txt"
+    question_file = filename + "_questions.txt"
+    hidden_folder = "." + filename
+    visible_folder = filename
+
+    if not os.path.exists(password_file):
+        print("No such secure file exists.")
+        return
+
+    with open(password_file, "r") as f:
+        saved_hash = f.read()
+
+    # 3 ATTEMPT PASSWORD SYSTEM
+    attempts = 3
+    while attempts > 0:
+        pwd = input("Enter password for this file: ")
+
+        if hash_password(pwd) == saved_hash:
+            if os.path.exists(hidden_folder):
+                os.rename(hidden_folder, visible_folder)
+            print("File unlocked successfully.")
+            return
+        else:
+            attempts -= 1
+            print(f"Incorrect password! Attempts left: {attempts}")
+
+    # IF 3 PASSWORD ATTEMPTS FAIL → ASK SECURITY QUESTIONS
+    print("\nToo many failed attempts!")
+    print("Answer the security questions to verify identity.\n")
+
+    if not os.path.exists(question_file):
+        print("Security questions missing. Access denied.")
+        return
+
+    # READ SECURITY ANSWERS
+    with open(question_file, "r") as f:
+        correct_q1 = f.readline().strip()
+        correct_q2 = f.readline().strip()
+
+    # ASK USER SECURITY QUESTIONS
+    ans1 = input("Your favourite color: ").strip().lower()
+    ans2 = input("Your best friend's name: ").strip().lower()
+
+    if ans1 == correct_q1 and ans2 == correct_q2:
+        print("Identity verified successfully!")
+        if os.path.exists(hidden_folder):
+            os.rename(hidden_folder, visible_folder)
+        print("File unlocked.")
+    else:
+        print("\n!!! UNAUTHORIZED ACCESS DETECTED !!!")
+        print("Multiple failed attempts and wrong security answers.")
+        print("The system has locked the file for security.")
+
+
+# --- Lock file again ---
+def lock_file():
+    filename = input("Enter file name: ").strip()
+    visible_folder = filename
+    hidden_folder = "." + filename
+
+    if os.path.exists(visible_folder):
+        os.rename(visible_folder, hidden_folder)
+        print("File locked again.")
+    else:
+        print("This file is already locked or doesn't exist.")
+
+
+# --- Reset File Password ---
+def reset_file_password():
+    filename = input("Enter file name: ").strip()
+    password_file = filename + "_password.txt"
+
+    if not os.path.exists(password_file):
+        print("No such secure file exists.")
+        return
+
+    old_pwd = input("Enter old password: ")
+
+    with open(password_file, "r") as f:
+        saved_hash = f.read()
+
+    if hash_password(old_pwd) != saved_hash:
+        print("Incorrect old password!")
+        return
+
+    # NEW BLOCK: ASK NEW PASSWORD + CONFIRM PASSWORD
+    while True:
+        new_pwd = input("Enter new password: ")
+        confirm = input("Confirm new password: ")
+
+        if new_pwd != confirm:
+            print("Passwords do not match! Try again.\n")
+        else:
+            break
+
+    with open(password_file, "w") as f:
+        f.write(hash_password(new_pwd))
+
+    print("Password reset successfully!")
+
+
+# --- Main Menu ---
+def main():
+    while True:
+        print("\n--- Secure File System ---")
+        print("1. Create New Secure File")
+        print("2. Unlock File")
+        print("3. Lock File Again")
+        print("4. Reset File Password")
+        print("5. Exit")
+
+        choice = input("Choose an option: ")
+
+        if choice == "1":
+            create_new_file()
+        elif choice == "2":
+            unlock_file()
+        elif choice == "3":
+            lock_file()
+        elif choice == "4":
+            reset_file_password()
+        elif choice == "5":
+            print("Goodbye!")
+            break
+        else:
+            print("Invalid choice.")
+
+
+main()

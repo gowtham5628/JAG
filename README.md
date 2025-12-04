@@ -1,2 +1,0 @@
-# JAG
-Secured folder system
