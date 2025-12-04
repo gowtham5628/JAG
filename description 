@@ -1,0 +1,94 @@
+✅ PROGRAM DESCRIPTION (PROJECT READY)
+
+This Python program is a Secure File Protection System designed to protect personal files using password authentication and security questions. It allows users to create a hidden folder that can be locked, unlocked, and accessed only by providing the correct password or answering backup security questions.
+
+The system uses SHA-256 hashing to securely store passwords, ensuring that the original password is not saved in plain text. If the user forgets the password or fails to enter it correctly three times, they can still unlock the file using the security questions set during creation.
+
+The program offers a simple text-based menu so users can easily choose different operations like creating a secure file, unlocking it, locking it again, or resetting the password. It also includes protection against unauthorized access by hiding folders using a dot-prefix and denying access after repeated failures.
+
+
+---
+
+📌 KEY FEATURES
+
+1. Create a Secure File
+
+User sets a filename, password, and two security question answers.
+
+The file is hidden using a dot (.) prefix.
+
+Password is stored using SHA-256 hashing.
+
+
+2. Unlock File
+
+User must enter the correct password.
+
+Allowed 3 attempts.
+
+If all attempts fail, the user can answer backup security questions.
+
+If successful, the hidden folder becomes visible.
+
+
+3. Lock File Again
+
+Converts the visible folder back into a hidden one.
+
+
+4. Reset Password
+
+User enters the old password.
+
+They can set a new password with confirmation.
+
+
+5. Unauthorized Access Detection
+
+If both password and security answers are wrong, the system denies access and keeps the file locked.
+
+
+
+---
+
+📌 TECHNICAL CONCEPTS USED
+
+✔ Password Hashing
+
+SHA-256 hashing is used to convert the password into an irreversible hash for security.
+
+✔ File and Directory Handling
+
+Uses os functions to:
+
+Create folders
+
+Hide folders
+
+Rename folders
+
+Check file existence
+
+
+✔ User Authentication System
+
+Password matching
+
+Security question verification
+
+Multiple attempt control
+
+
+✔ Console-based Menu System
+
+Easy-to-use text interface for navigation.
+
+
+---
+
+📌 OVERALL PURPOSE
+
+This program demonstrates basic cybersecurity techniques such as password hashing, secure authentication, file protection, and access control. It is designed to help users understand how secure file systems work while providing a functional and interactive tool that protects sensitive data from unauthorized access.
+
+
+---
